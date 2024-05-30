@@ -1,11 +1,15 @@
-import { expect } from '@wdio/globals';
 import LoginPage from '../pageobjects/login.page.js';
+import LogoutPage from '../pageobjects/logout.page.js';
+
+const loginpage = new LoginPage();
+const logoutpage = new LogoutPage();
+
 
 describe('Logout', () => {
     before(async () => {
-        await LoginPage.open();
-        await LoginPage.login("standard_user", "secret_sauce");
-        await LoginPage.btnSubmit.click();
+        
+        await loginpage.open();
+        await loginpage.login("standard_user", "secret_sauce");
         
         await browser.waitUntil(async () => await browser.getUrl() === "https://www.saucedemo.com/inventory.html", {
             timeout: 5000,
@@ -14,19 +18,18 @@ describe('Logout', () => {
     });
 
     it('should logout successfully', async () => {
-        await LoginPage.logout();
+        await logoutpage.logout();
         
         await browser.waitUntil(async () => await browser.getUrl() === "https://www.saucedemo.com/", {
             timeout: 5000,
             timeoutMsg: "Expected to be on login page after 5s"
         });
         
-        await browser.pause(2000)
 
-        const loginValue = await LoginPage.inputUsername.getValue();
+        const loginValue = await loginpage.inputUsername.getValue();
         expect(loginValue).toBe("");
 
-        const passwordValue = await LoginPage.inputPassword.getValue();
+        const passwordValue = await loginpage.inputPassword.getValue();
         expect(passwordValue).toBe("");
     });
 });

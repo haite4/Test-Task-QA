@@ -1,14 +1,18 @@
-import { expect } from '@wdio/globals';
 import LoginPage from '../pageobjects/login.page.js';
-import Page from '../pageobjects/page.js';
+import InventoryPage from '../pageobjects/inventory.page.js';
+import HeaderPage from '../pageobjects/header.page.js';
+import LogoutPage from '../pageobjects/logout.page.js';
 
-const page = new Page();
+const inventorypage = new InventoryPage();
+const headerpage = new HeaderPage();
+const loginpage = new LoginPage();
+const logoutpage = new LogoutPage();
 
 describe('Saving the card after logout', () => {
     before(async () => {
-        await LoginPage.open();
-        await LoginPage.login("standard_user", "secret_sauce");
-        await LoginPage.btnSubmit.click();
+        
+        await loginpage.open();
+        await loginpage.login("standard_user", "secret_sauce");
         
         await browser.waitUntil(async () => await browser.getUrl() === "https://www.saucedemo.com/inventory.html", {
             timeout: 5000,
@@ -19,30 +23,23 @@ describe('Saving the card after logout', () => {
 
     it("Verify that the previously added product remains in the cart after logging in again.", async () => {
 
-        await page.addToCart()
-        await browser.pause(3000)
-        await LoginPage.logout()
+        await inventorypage.addToCart()
+        await logoutpage.logout()
 
-        const loginValue = await LoginPage.inputUsername.getValue();
+        const loginValue = await loginpage.inputUsername.getValue();
         expect(loginValue).toBe("");
 
-        const passwordValue = await LoginPage.inputPassword.getValue();
+        const passwordValue = await loginpage.inputPassword.getValue();
         expect(passwordValue).toBe("");
 
-        await browser.pause(3000)
-
-        await LoginPage.login("standard_user", "secret_sauce");
-
-        await LoginPage.btnSubmit.click();
+        await loginpage.login("standard_user", "secret_sauce");
 
         await browser.waitUntil(async () => await browser.getUrl() === "https://www.saucedemo.com/inventory.html", {
             timeout: 5000,
             timeoutMsg: "Expected to be on inventory page after 5s"
         });
 
-        
-        await page.shoppingCartLink.click()
-        await browser.pause(3000)
+        await headerpage.cartIconClick()
 
     })
 

@@ -1,4 +1,3 @@
-import { $ } from '@wdio/globals'
 import Page from './page.js';
 
 /**
@@ -8,42 +7,39 @@ class LoginPage extends Page {
     /**
      * define selectors using getter methods
      */
-    get inputUsername () { return $('#user-name')}
+    get inputUsername() { return $('#user-name')};
 
-    get inputPassword () { return $('#password') }
+    get inputPassword() { return $('#password') };
 
-    get btnSubmit () { return $('#login-button') }
+    get btnSubmit() { return $('#login-button') };
     
-    get burgeMenu (){ return $('#react-burger-menu-btn') }
-
-    get logoutLink () { return $('#logout_sidebar_link') }
-
-
-    /**
-     * 
-     * a method to encapsule automation code to interact with the page
-     * e.g. to login using username and password
-     */
+ 
+ 
     async login (username,password) {
 
-        await this.inputUsername.setValue(username);
+        if(username && password){
 
-        await this.inputPassword.setValue(password);
-        
-        
+            await this.inputUsername.setValue(username);
+            await this.inputPassword.setValue(password);
+
+            await this.btnSubmit.waitForClickable({timeout:2000});
+            await this.btnSubmit.click();
+        }
+            
     }
 
-    async logout(){
-        await this.burgeMenu.click()
-        await this.logoutLink.click()
+
+
+    async btnSubmitClick(){
+
+        await this.btnSubmit.waitForClickable({timeout:2000});
+        await this.btnSubmit.click();
     }
 
-    /**
-     * overwrite specific options to adapt it to page object
-     */
+  
     open () {
         return browser.url("https://www.saucedemo.com/");
     }
 }
 
-export default new LoginPage();
+export default LoginPage;

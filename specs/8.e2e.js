@@ -1,15 +1,22 @@
-import { expect } from '@wdio/globals';
 import LoginPage from '../pageobjects/login.page.js';
-import Page from '../pageobjects/page.js';
-import { execArgv } from 'process';
+import CheckoutPage from '../pageobjects/checkout.page.js';
+import InventoryPage from '../pageobjects/inventory.page.js';
+import HeaderPage from '../pageobjects/header.page.js';
+import CartPage from '../pageobjects/cart.page.js';
 
-const page = new Page();
+
+const loginpage = new LoginPage();
+const checkoutpage = new CheckoutPage();
+const inventorypage = new InventoryPage();
+const headerpage = new HeaderPage();
+const cartpage = new CartPage();
+
 
 describe('Valid Checkout', () => {
     before(async () => {
-        await LoginPage.open()
-        await LoginPage.login("standard_user", "secret_sauce");
-        await LoginPage.btnSubmit.click();
+
+        await loginpage.open()
+        await loginpage.login("standard_user", "secret_sauce");
 
         await browser.waitUntil(async () => await browser.getUrl()  === "https://www.saucedemo.com/inventory.html",{
             timeout:5000,
@@ -18,25 +25,25 @@ describe('Valid Checkout', () => {
     })
 
    it('Checkout', async() => {
-        await page.addToCart()
-        await page.shoppingCartLink.click()
-        await browser.pause(2000)
-        await page.buttonCheckout.click()
-        await browser.pause(2000)
-        await page.firstNameInput.setValue("Andrey")
-        await page.lastNameInput.setValue("Boyarskiy")
-        await page.postalCodeInput.setValue("1231313131")
-        await browser.pause(2000)
-        await page.buttonContinue.click()
-        await browser.pause(1000)
-        await page.buttonFinish.click()
-        await browser.pause(1000)
-        await page.buttonBacktoProducts.click()
-        const cartBadge = await $(".shopping_cart_badge")
-        const isCartNotEmpty = await cartBadge.isExisting();
-        expect(isCartNotEmpty).toBe(false, "Expected the shopping cart not have items")
 
-        await browser.pause(2000)
+        await inventorypage.addToCart();
+
+        await headerpage.cartIconClick();
+
+        await cartpage.clickButtonCheckout();
+
+        await checkoutpage.checkoutInformation();
+
+        await checkoutpage.clickButtonContinue();
+
+        await checkoutpage.clickButtonFinish();
+
+        await checkoutpage.clickButtonBacktoProducts();
+
+        const isCartNotEmpty = await cartpage.cartBadge.isExisting();
+        expect(isCartNotEmpty).toBe(false, "Expected the shopping cart not have items");
+
+        
 
 
    } )
